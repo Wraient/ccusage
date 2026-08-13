@@ -766,7 +766,10 @@ fn assert_unified_rows_use_grok_home(kind: AgentReportKind) {
     let fixture = fs_fixture!({
         "grok/sessions/proj/sess-grok/updates.jsonl": line,
     });
-    let _env = isolated_agent_env(&fixture, "GROK_HOME", fixture.path("grok").into_os_string());
+    let _env = isolated_agent_env(
+        &fixture,
+        &[("GROK_HOME", fixture.path("grok").into_os_string())],
+    );
     let shared = fixture_shared("20250615", "20250615");
 
     let result = loader::load_rows(kind, &shared).unwrap();

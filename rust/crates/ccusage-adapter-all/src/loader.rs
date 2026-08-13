@@ -9,6 +9,7 @@ use serde_json::{Value, json};
 
 use crate::{
     BUILT_IN_AGENT_NAMES, CodexGroup, LoadedEntry, ModelBreakdown, PricingMap, Result,
+    SessionAccumulator, UsageSummary,
     adapter::{
         amp, claude, cline, codebuff, codex, copilot, droid, gemini, goose, grok, hermes, kilo,
         kimi, muse, openclaw, opencode, pi, qwen, zcode,

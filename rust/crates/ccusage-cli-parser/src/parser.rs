@@ -360,13 +360,6 @@ fn parse_command(
             Command::Qwen,
         ),
         "openclaw" => parse_openclaw_command(parser, shared, config),
-        "grok" => parse_basic_agent_command(
-            parser,
-            shared,
-            "grok",
-            STANDARD_AGENT_REPORTS,
-            Command::Grok,
-        ),
         _ => Err(format!("Unknown command '{command}'")),
     }
 }
