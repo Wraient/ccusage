@@ -29,6 +29,7 @@ pub enum Command {
     Cline(AgentCommandArgs),
     Muse(AgentCommandArgs),
     ZCode(AgentCommandArgs),
+    Antigravity(AgentCommandArgs),
 }
 
 #[derive(Clone, Debug, Default)]

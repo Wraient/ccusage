@@ -345,6 +345,13 @@ fn parse_command(
             STANDARD_AGENT_REPORTS,
             Command::Grok,
         ),
+        "antigravity" => parse_basic_agent_command(
+            parser,
+            shared,
+            "antigravity",
+            STANDARD_AGENT_REPORTS,
+            Command::Antigravity,
+        ),
         "kimi" => parse_basic_agent_command(
             parser,
             shared,
@@ -793,6 +800,7 @@ fn is_command(arg: &str) -> bool {
             | "cline"
             | "muse"
             | "zcode"
+            | "antigravity"
             | "grok"
     )
 }
@@ -966,7 +974,8 @@ fn agent_report_supported(agent: &str, report: &str) -> bool {
         "codex" => matches!(report, "daily" | "monthly" | "session"),
         "opencode" => matches!(report, "daily" | "weekly" | "monthly" | "session"),
         "amp" | "droid" | "codebuff" | "hermes" | "pi" | "goose" | "kilo" | "copilot"
-        | "gemini" | "kimi" | "qwen" | "openclaw" | "cline" | "muse" | "zcode" | "grok" => {
+        | "gemini" | "kimi" | "qwen" | "openclaw" | "cline" | "muse" | "zcode" | "antigravity"
+        | "grok" => {
             matches!(report, "daily" | "monthly" | "session")
         }
         _ => false,
@@ -991,6 +1000,7 @@ fn agent_display_name(agent: &str) -> &'static str {
         "cline" => "Cline",
         "muse" => "Muse Code",
         "zcode" => "ZCode",
+        "antigravity" => "Antigravity",
         "qwen" => "Qwen",
         "openclaw" => "OpenClaw",
         "grok" => "Grok",
@@ -1071,6 +1081,7 @@ fn last_option_error(command: Option<&Command>, root_shared: &SharedArgs) -> Opt
             | Command::Cline(args)
             | Command::Muse(args)
             | Command::ZCode(args)
+            | Command::Antigravity(args)
             | Command::Grok(args),
         ) => (&args.shared, args.kind != AgentReportKind::Session),
     };
