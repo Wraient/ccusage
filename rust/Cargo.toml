@@ -20,6 +20,7 @@ ccusage-adapter-all = { path = "crates/ccusage-adapter-all" }
 ccusage-adapter-amp = { path = "adapters/amp" }
 ccusage-adapter-claude = { path = "adapters/claude" }
 ccusage-adapter-codebuff = { path = "adapters/codebuff" }
+ccusage-adapter-cline = { path = "adapters/cline" }
 ccusage-adapter-codex = { path = "adapters/codex" }
 ccusage-adapter-common = { path = "adapters/common" }
 ccusage-adapter-copilot = { path = "adapters/copilot" }
@@ -30,10 +31,12 @@ ccusage-adapter-grok = { path = "adapters/grok" }
 ccusage-adapter-hermes = { path = "adapters/hermes" }
 ccusage-adapter-kilo = { path = "adapters/kilo" }
 ccusage-adapter-kimi = { path = "adapters/kimi" }
+ccusage-adapter-muse = { path = "adapters/muse" }
 ccusage-adapter-openclaw = { path = "adapters/openclaw" }
 ccusage-adapter-opencode = { path = "adapters/opencode" }
 ccusage-adapter-pi = { path = "adapters/pi" }
 ccusage-adapter-qwen = { path = "adapters/qwen" }
+ccusage-adapter-zcode = { path = "adapters/zcode" }
 ccusage-cli = { path = "crates/ccusage-cli" }
 ccusage-cli-parser = { path = "crates/ccusage-cli-parser" }
 ccusage-config = { path = "crates/ccusage-config" }

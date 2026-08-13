@@ -102,6 +102,18 @@
 				"description": "Show OpenClaw usage commands"
 			},
 			{
+				"name": "cline",
+				"description": "Show Cline usage commands"
+			},
+			{
+				"name": "muse",
+				"description": "Show Muse Code usage commands"
+			},
+			{
+				"name": "zcode",
+				"description": "Show ZCode usage commands"
+			},
+			{
 				"name": "grok",
 				"description": "Show Grok Build CLI usage commands"
 			}
@@ -738,6 +750,117 @@
 			"description": "Show OpenClaw usage grouped by session",
 			"usage": "ccusage openclaw session <OPTIONS>",
 			"options": "openclaw_combined_options"
+		},
+		{
+			"path": ["cline"],
+			"description": "Usage reports for cline.",
+			"usage": "ccusage cline <COMMANDS>",
+			"commands": [
+				{
+					"name": "daily",
+					"description": "Show Cline usage grouped by date"
+				},
+				{
+					"name": "monthly",
+					"description": "Show Cline usage grouped by month"
+				},
+				{
+					"name": "session",
+					"description": "Show Cline usage grouped by session"
+				}
+			]
+		},
+		{
+			"path": ["cline", "daily"],
+			"description": "Show Cline usage grouped by date",
+			"usage": "ccusage cline daily <OPTIONS>",
+			"options": "agent_period_options"
+		},
+		{
+			"path": ["cline", "monthly"],
+			"description": "Show Cline usage grouped by month",
+			"usage": "ccusage cline monthly <OPTIONS>",
+			"options": "agent_period_options"
+		},
+		{
+			"path": ["cline", "session"],
+			"description": "Show Cline usage grouped by session",
+			"usage": "ccusage cline session <OPTIONS>",
+			"options": "agent_options"
+		},
+		{
+			"path": ["muse"],
+			"description": "Usage reports for muse.",
+			"usage": "ccusage muse <COMMANDS>",
+			"commands": [
+				{
+					"name": "daily",
+					"description": "Show Muse Code usage grouped by date"
+				},
+				{
+					"name": "monthly",
+					"description": "Show Muse Code usage grouped by month"
+				},
+				{
+					"name": "session",
+					"description": "Show Muse Code usage grouped by session"
+				}
+			]
+		},
+		{
+			"path": ["muse", "daily"],
+			"description": "Show Muse Code usage grouped by date",
+			"usage": "ccusage muse daily <OPTIONS>",
+			"options": "agent_period_options"
+		},
+		{
+			"path": ["muse", "monthly"],
+			"description": "Show Muse Code usage grouped by month",
+			"usage": "ccusage muse monthly <OPTIONS>",
+			"options": "agent_period_options"
+		},
+		{
+			"path": ["muse", "session"],
+			"description": "Show Muse Code usage grouped by session",
+			"usage": "ccusage muse session <OPTIONS>",
+			"options": "agent_options"
+		},
+		{
+			"path": ["zcode"],
+			"description": "Usage reports for zcode.",
+			"usage": "ccusage zcode <COMMANDS>",
+			"commands": [
+				{
+					"name": "daily",
+					"description": "Show ZCode usage grouped by date"
+				},
+				{
+					"name": "monthly",
+					"description": "Show ZCode usage grouped by month"
+				},
+				{
+					"name": "session",
+					"description": "Show ZCode usage grouped by session"
+				}
+			]
+		},
+		{
+			"path": ["zcode", "daily"],
+			"description": "Show ZCode usage grouped by date",
+			"usage": "ccusage zcode daily <OPTIONS>",
+			"options": "agent_period_options"
+		},
+		{
+			"path": ["zcode", "monthly"],
+			"description": "Show ZCode usage grouped by month",
+			"usage": "ccusage zcode monthly <OPTIONS>",
+			"options": "agent_period_options"
+		},
+		{
+			"path": ["zcode", "session"],
+			"description": "Show ZCode usage grouped by session",
+			"usage": "ccusage zcode session <OPTIONS>",
+			"options": "agent_options"
 		},
 		{
 			"path": ["grok"],

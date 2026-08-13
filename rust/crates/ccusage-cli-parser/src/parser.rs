@@ -317,6 +317,34 @@ fn parse_command(
             STANDARD_AGENT_REPORTS,
             Command::Gemini,
         ),
+        "cline" => parse_basic_agent_command(
+            parser,
+            shared,
+            "cline",
+            STANDARD_AGENT_REPORTS,
+            Command::Cline,
+        ),
+        "muse" => parse_basic_agent_command(
+            parser,
+            shared,
+            "muse",
+            STANDARD_AGENT_REPORTS,
+            Command::Muse,
+        ),
+        "zcode" => parse_basic_agent_command(
+            parser,
+            shared,
+            "zcode",
+            STANDARD_AGENT_REPORTS,
+            Command::ZCode,
+        ),
+        "grok" => parse_basic_agent_command(
+            parser,
+            shared,
+            "grok",
+            STANDARD_AGENT_REPORTS,
+            Command::Grok,
+        ),
         "kimi" => parse_basic_agent_command(
             parser,
             shared,
@@ -769,6 +797,9 @@ fn is_command(arg: &str) -> bool {
             | "gemini"
             | "kimi"
             | "qwen"
+            | "cline"
+            | "muse"
+            | "zcode"
             | "grok"
     )
 }
@@ -942,7 +973,7 @@ fn agent_report_supported(agent: &str, report: &str) -> bool {
         "codex" => matches!(report, "daily" | "monthly" | "session"),
         "opencode" => matches!(report, "daily" | "weekly" | "monthly" | "session"),
         "amp" | "droid" | "codebuff" | "hermes" | "pi" | "goose" | "kilo" | "copilot"
-        | "gemini" | "kimi" | "qwen" | "openclaw" | "grok" => {
+        | "gemini" | "kimi" | "qwen" | "openclaw" | "cline" | "muse" | "zcode" | "grok" => {
             matches!(report, "daily" | "monthly" | "session")
         }
         _ => false,
@@ -964,6 +995,9 @@ fn agent_display_name(agent: &str) -> &'static str {
         "copilot" => "GitHub Copilot CLI",
         "gemini" => "Gemini CLI",
         "kimi" => "Kimi",
+        "cline" => "Cline",
+        "muse" => "Muse Code",
+        "zcode" => "ZCode",
         "qwen" => "Qwen",
         "openclaw" => "OpenClaw",
         "grok" => "Grok",
@@ -1041,6 +1075,9 @@ fn last_option_error(command: Option<&Command>, root_shared: &SharedArgs) -> Opt
             | Command::Kimi(args)
             | Command::Qwen(args)
             | Command::OpenClaw(args)
+            | Command::Cline(args)
+            | Command::Muse(args)
+            | Command::ZCode(args)
             | Command::Grok(args),
         ) => (&args.shared, args.kind != AgentReportKind::Session),
     };

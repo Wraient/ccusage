@@ -495,8 +495,7 @@ fn multi_section_claude_fixture_matches_standalone_sections_for_daily_and_sessio
     });
     let _env = isolated_agent_env(
         &fixture,
-        "CLAUDE_CONFIG_DIR",
-        fixture.root().as_os_str().into(),
+        &[("CLAUDE_CONFIG_DIR", fixture.root().as_os_str().into())],
     );
     let shared = fixture_shared("20990102", "20990102");
 
@@ -517,12 +516,199 @@ fn multi_section_codex_fixture_matches_standalone_sections_for_daily_and_session
     });
     let _env = isolated_agent_env(
         &fixture,
-        "CODEX_HOME",
-        fixture.path("codex").into_os_string(),
+        &[("CODEX_HOME", fixture.path("codex").into_os_string())],
     );
     let shared = fixture_shared("20990201", "20990202");
 
     assert_daily_family_and_session_sections_match_standalone(&shared);
+}
+
+/// One Muse Code event envelope recorded at 2099-01-02T00:00:00Z.
+fn muse_envelope(payload_type: &str, id: &str, stream_id: &str, event: &str) -> String {
+    format!(
+        r#"{{"schema_version":1,"id":"{id}","stream":{{"kind":"session","id":"{stream_id}"}},"sequence":1,"recorded_at":4070995200000000,"record_type":"event","durability":"durable","causation_id":null,"payload_type":"{payload_type}","payload_schema_version":1,"payload":{event}}}"#
+    )
+}
+
+#[test]
+fn detects_muse_and_zcode_sources_through_production_wiring() {
+    let fixture = fs_fixture!({
+        "muse/sessions/2099/01/02/sess-a/session.jsonl": [
+            muse_envelope(
+                "runtime.session.metadata",
+                "meta-1",
+                "sess-a",
+                r#"{"record":{"workspace_root":"/home/user/projects/ccusage"}}"#,
+            ),
+            muse_envelope(
+                "runtime.session",
+                "rec-1",
+                "sess-a",
+                r#"{"event":{"kind":"model_completed","model":"muse-spark-1.2","usage":{"cache_read_tokens":0,"input_tokens":100,"output_tokens":10}},"kind":"run"}"#,
+            ),
+        ]
+        .join("\n"),
+    });
+    // A ZCode database holding one completed request plus the assistant
+    // message that mirrors it. The message must not double count.
+    let db_path = fixture.path("zcode/cli/db/db.sqlite");
+    std::fs::create_dir_all(db_path.parent().unwrap()).unwrap();
+    let db = sqlite::open(&db_path).unwrap();
+    db.execute(
+        r#"
+CREATE TABLE model_usage (id TEXT PRIMARY KEY, session_id TEXT, model_id TEXT, status TEXT, started_at INTEGER, input_tokens INTEGER, output_tokens INTEGER, cache_creation_input_tokens INTEGER, cache_read_input_tokens INTEGER, assistant_message_id TEXT);
+CREATE TABLE message (id TEXT PRIMARY KEY, session_id TEXT, time_created INTEGER, data TEXT);
+CREATE TABLE session (id TEXT PRIMARY KEY, directory TEXT);
+"#,
+    )
+    .unwrap();
+    let mut statement = db
+        .prepare(
+            "INSERT INTO model_usage (id, session_id, model_id, status, started_at, input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens, assistant_message_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+        )
+        .unwrap();
+    statement.bind((1, "usage-1")).unwrap();
+    statement.bind((2, "sess-z")).unwrap();
+    statement.bind((3, "glm-5.2")).unwrap();
+    statement.bind((4, "completed")).unwrap();
+    statement.bind((5, 4_070_995_200_000_i64)).unwrap();
+    statement.bind((6, 200)).unwrap();
+    statement.bind((7, 50)).unwrap();
+    statement.bind((8, 0)).unwrap();
+    statement.bind((9, 100)).unwrap();
+    statement.bind((10, "msg-1")).unwrap();
+    statement.next().unwrap();
+    let mut statement = db
+        .prepare(
+            "INSERT INTO message (id, session_id, time_created, data) VALUES (?1, ?2, ?3, ?4)",
+        )
+        .unwrap();
+    statement.bind((1, "msg-1")).unwrap();
+    statement.bind((2, "sess-z")).unwrap();
+    statement.bind((3, 4_070_995_200_000_i64)).unwrap();
+    statement
+        .bind((
+            4,
+            r#"{"role":"assistant","modelID":"glm-5.2","tokens":{"total":300,"input":200,"output":50,"cache":{"read":100,"write":0}}}"#,
+        ))
+        .unwrap();
+    statement.next().unwrap();
+    let mut statement = db
+        .prepare("INSERT INTO session (id, directory) VALUES (?1, ?2)")
+        .unwrap();
+    statement.bind((1, "sess-z")).unwrap();
+    statement.bind((2, "/home/user/projects/ccusage")).unwrap();
+    statement.next().unwrap();
+
+    let _env = isolated_agent_env(
+        &fixture,
+        &[
+            ("XDG_DATA_HOME", fixture.root().as_os_str().into()),
+            (
+                "ZCODE_DATA_DIR",
+                fixture.path("zcode").as_os_str().to_owned(),
+            ),
+        ],
+    );
+    let shared = fixture_shared("20990102", "20990102");
+
+    let result = load_rows(AgentReportKind::Daily, &shared).unwrap();
+
+    assert!(
+        result.detected_agents.contains(&"muse"),
+        "detected agents: {:?}",
+        result.detected_agents
+    );
+    assert!(
+        result.detected_agents.contains(&"zcode"),
+        "detected agents: {:?}",
+        result.detected_agents
+    );
+    assert_eq!(result.rows.len(), 1);
+    let muse = result.rows[0]
+        .agent_breakdowns
+        .as_ref()
+        .and_then(|rows| rows.iter().find(|row| row.agent == "muse"))
+        .expect("muse breakdown present");
+    let zcode = result.rows[0]
+        .agent_breakdowns
+        .as_ref()
+        .and_then(|rows| rows.iter().find(|row| row.agent == "zcode"))
+        .expect("zcode breakdown present");
+    assert_eq!(muse.input_tokens, 100);
+    assert_eq!(zcode.input_tokens, 100);
+    assert_eq!(zcode.cache_read_tokens, 100);
+}
+
+/// One Grok Build `turn_completed` update recorded at 2099-01-02T00:00:00Z.
+fn grok_turn(session_id: &str, event_suffix: &str, agent_ts_ms: i64, model: &str) -> String {
+    let secs = agent_ts_ms / 1000;
+    let mut model_usage = serde_json::Map::new();
+    model_usage.insert(
+        model.to_string(),
+        serde_json::json!({
+            "inputTokens": 100,
+            "outputTokens": 10,
+            "cachedReadTokens": 25
+        }),
+    );
+    serde_json::json!({
+        "timestamp": secs,
+        "method": "_x.ai/session/update",
+        "params": {
+            "sessionId": session_id,
+            "update": {
+                "sessionUpdate": "turn_completed",
+                "usage": {
+                    "inputTokens": 100,
+                    "outputTokens": 10,
+                    "cachedReadTokens": 25,
+                    "modelUsage": model_usage
+                }
+            },
+            "_meta": {
+                "eventId": format!("{session_id}-{event_suffix}"),
+                "agentTimestampMs": agent_ts_ms
+            }
+        }
+    })
+    .to_string()
+}
+
+#[test]
+fn detects_grok_source_through_production_wiring() {
+    let fixture = fs_fixture!({
+        "sessions/%2Fhome%2Fuser%2Fprojects%2Fdemo/sess-g/updates.jsonl": grok_turn(
+            "sess-g",
+            "1",
+            4_070_995_200_000,
+            "grok-4.5",
+        ),
+        "sessions/%2Fhome%2Fuser%2Fprojects%2Fdemo/sess-g/summary.json":
+            r#"{"info":{"id":"sess-g","cwd":"/home/user/projects/demo"}}"#,
+    });
+    let _env = isolated_agent_env(
+        &fixture,
+        &[("GROK_HOME", fixture.root().as_os_str().to_owned())],
+    );
+    let shared = fixture_shared("20990102", "20990102");
+
+    let result = load_rows(AgentReportKind::Daily, &shared).unwrap();
+
+    assert!(
+        result.detected_agents.contains(&"grok"),
+        "detected agents: {:?}",
+        result.detected_agents
+    );
+    assert_eq!(result.rows.len(), 1);
+    let grok = result.rows[0]
+        .agent_breakdowns
+        .as_ref()
+        .and_then(|rows| rows.iter().find(|row| row.agent == "grok"))
+        .expect("grok breakdown present");
+    assert_eq!(grok.input_tokens, 75);
+    assert_eq!(grok.cache_read_tokens, 25);
+    assert_eq!(grok.output_tokens, 10);
 }
 
 fn fixture_shared(since: &str, until: &str) -> SharedArgs {
@@ -538,8 +724,7 @@ fn fixture_shared(since: &str, until: &str) -> SharedArgs {
 
 fn isolated_agent_env(
     fixture: &ccusage_test_support::Fixture,
-    source_key: &'static str,
-    source_value: OsString,
+    sources: &[(&'static str, OsString)],
 ) -> EnvVarsGuard {
     let home = fixture.path("empty-home").into_os_string();
     let xdg_config = fixture.path("empty-xdg-config").into_os_string();
@@ -570,7 +755,9 @@ fn isolated_agent_env(
         Some(fixture.path("empty-userprofile").into_os_string()),
     ));
     vars.push(("XDG_CONFIG_HOME", Some(xdg_config)));
-    vars.push((source_key, Some(source_value)));
+    for (source_key, source_value) in sources {
+        vars.push((*source_key, Some(source_value.clone())));
+    }
     EnvVarsGuard::set_many(vars)
 }
 

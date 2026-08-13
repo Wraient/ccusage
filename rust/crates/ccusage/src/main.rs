@@ -48,6 +48,9 @@ fn main() -> Result<()> {
         Some(Command::Kimi(args)) => adapter::kimi::run(args),
         Some(Command::OpenClaw(args)) => adapter::openclaw::run(args),
         Some(Command::Grok(args)) => adapter::grok::run(args),
+        Some(Command::Cline(args)) => adapter::cline::run(args),
+        Some(Command::Muse(args)) => adapter::muse::run(args),
+        Some(Command::ZCode(args)) => adapter::zcode::run(args),
         None => {
             let args = AgentCommandArgs {
                 shared: cli.shared,
@@ -86,8 +89,9 @@ mod tests {
 
     #[test]
     fn agent_commands_are_exposed_by_independent_crates() {
-        let runs: [fn(AgentCommandArgs) -> Result<()>; 15] = [
+        let runs: [fn(AgentCommandArgs) -> Result<()>; 18] = [
             ccusage_adapter_amp::run,
+            ccusage_adapter_cline::run,
             ccusage_adapter_codebuff::run,
             ccusage_adapter_codex::run,
             ccusage_adapter_copilot::run,
@@ -98,13 +102,15 @@ mod tests {
             ccusage_adapter_hermes::run,
             ccusage_adapter_kilo::run,
             ccusage_adapter_kimi::run,
+            ccusage_adapter_muse::run,
             ccusage_adapter_openclaw::run,
             ccusage_adapter_opencode::run,
             ccusage_adapter_pi::run,
             ccusage_adapter_qwen::run,
+            ccusage_adapter_zcode::run,
         ];
 
-        assert_eq!(runs.len(), 15);
+        assert_eq!(runs.len(), 18);
     }
 
     #[test]

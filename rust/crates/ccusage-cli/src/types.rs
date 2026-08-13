@@ -26,6 +26,9 @@ pub enum Command {
     Qwen(AgentCommandArgs),
     OpenClaw(AgentCommandArgs),
     Grok(AgentCommandArgs),
+    Cline(AgentCommandArgs),
+    Muse(AgentCommandArgs),
+    ZCode(AgentCommandArgs),
 }
 
 #[derive(Clone, Debug, Default)]

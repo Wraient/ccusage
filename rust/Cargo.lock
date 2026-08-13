@@ -116,6 +116,7 @@ dependencies = [
  "ccusage-adapter-all",
  "ccusage-adapter-amp",
  "ccusage-adapter-claude",
+ "ccusage-adapter-cline",
  "ccusage-adapter-codebuff",
  "ccusage-adapter-codex",
  "ccusage-adapter-common",
@@ -127,10 +128,12 @@ dependencies = [
  "ccusage-adapter-hermes",
  "ccusage-adapter-kilo",
  "ccusage-adapter-kimi",
+ "ccusage-adapter-muse",
  "ccusage-adapter-openclaw",
  "ccusage-adapter-opencode",
  "ccusage-adapter-pi",
  "ccusage-adapter-qwen",
+ "ccusage-adapter-zcode",
  "ccusage-cli",
  "ccusage-cli-parser",
  "ccusage-config",
@@ -148,6 +151,7 @@ version = "0.0.0"
 dependencies = [
  "ccusage-adapter-amp",
  "ccusage-adapter-claude",
+ "ccusage-adapter-cline",
  "ccusage-adapter-codebuff",
  "ccusage-adapter-codex",
  "ccusage-adapter-common",
@@ -159,16 +163,19 @@ dependencies = [
  "ccusage-adapter-hermes",
  "ccusage-adapter-kilo",
  "ccusage-adapter-kimi",
+ "ccusage-adapter-muse",
  "ccusage-adapter-openclaw",
  "ccusage-adapter-opencode",
  "ccusage-adapter-pi",
  "ccusage-adapter-qwen",
+ "ccusage-adapter-zcode",
  "ccusage-cli",
  "ccusage-core",
  "ccusage-test-support",
  "insta",
  "serde",
  "serde_json",
+ "sqlite",
 ]
 
 [[package]]
@@ -194,6 +201,17 @@ dependencies = [
  "memchr",
  "rustc-hash",
  "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "ccusage-adapter-cline"
+version = "0.0.0"
+dependencies = [
+ "ccusage-adapter-common",
+ "ccusage-core",
+ "ccusage-test-support",
+ "jiff",
  "serde_json",
 ]
 
@@ -332,6 +350,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ccusage-adapter-muse"
+version = "0.0.0"
+dependencies = [
+ "ccusage-adapter-common",
+ "ccusage-core",
+ "ccusage-test-support",
+ "jiff",
+ "serde_json",
+]
+
+[[package]]
 name = "ccusage-adapter-openclaw"
 version = "0.0.0"
 dependencies = [
@@ -380,6 +409,18 @@ dependencies = [
  "jiff",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "ccusage-adapter-zcode"
+version = "0.0.0"
+dependencies = [
+ "ccusage-adapter-common",
+ "ccusage-core",
+ "ccusage-test-support",
+ "jiff",
+ "serde_json",
+ "sqlite",
 ]
 
 [[package]]
