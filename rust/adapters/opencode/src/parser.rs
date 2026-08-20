@@ -28,6 +28,8 @@ pub struct OpenCodeMessage {
     )]
     provider_id: Option<String>,
     #[serde(default, deserialize_with = "jsonl::lenient_object")]
+    model: Option<OpenCodeModelRef>,
+    #[serde(default, deserialize_with = "jsonl::lenient_object")]
     time: Option<OpenCodeTime>,
     #[serde(default, deserialize_with = "jsonl::non_empty_string")]
     id: Option<String>,
@@ -39,6 +41,20 @@ pub struct OpenCodeMessage {
     session_id: Option<String>,
     #[serde(default, deserialize_with = "jsonl::lenient_f64")]
     cost: Option<f64>,
+}
+
+/// Nested `model` object used by newer OpenCode `session_message` rows
+/// where the model is `{ "id": "...", "providerID": "..." }`.
+#[derive(Debug, Default, Deserialize)]
+struct OpenCodeModelRef {
+    #[serde(default, deserialize_with = "jsonl::non_empty_string")]
+    id: Option<String>,
+    #[serde(
+        rename = "providerID",
+        default,
+        deserialize_with = "jsonl::non_empty_string"
+    )]
+    provider_id: Option<String>,
 }
 
 /// Token usage block carried by OpenCode messages.
@@ -98,8 +114,14 @@ pub fn message_value_to_entry(
     {
         return None;
     }
-    let model = value.model_id.clone()?;
-    let provider = value.provider_id.clone()?;
+    let model = value
+        .model_id
+        .clone()
+        .or_else(|| value.model.as_ref().and_then(|m| m.id.clone()))?;
+    let provider = value
+        .provider_id
+        .clone()
+        .or_else(|| value.model.as_ref().and_then(|m| m.provider_id.clone()))?;
     let millis = value
         .time
         .as_ref()
@@ -508,5 +530,40 @@ mod tests {
                 "unknownProvider": open_code_model_candidates("gpt-test", "unknown"),
             }
         }));
+    }
+
+    #[test]
+    fn parses_nested_model_object_from_session_message() {
+        let tz = crate::parse_tz(Some("UTC"));
+        let mut pricing = PricingMap::default();
+        pricing.load_json(
+            r#"{
+                "muse-spark-1.2-contributor-free": {
+                    "input_cost_per_token": 0.000001,
+                    "output_cost_per_token": 0.000002
+                }
+            }"#,
+        );
+        let entry = message_value_to_entry(
+            &message(json!({
+                "time": { "created": 1767312000000i64 },
+                "model": { "id": "muse-spark-1.2-contributor-free", "providerID": "opencode" },
+                "tokens": { "input": 100, "output": 20 },
+                "cost": 0
+            })),
+            Some("msg-nested-1".to_string()),
+            Some("session-nested".to_string()),
+            tz.as_ref(),
+            CostMode::Auto,
+            Some(&pricing),
+        )
+        .unwrap();
+        assert_eq!(
+            entry.model.as_deref(),
+            Some("muse-spark-1.2-contributor-free")
+        );
+        assert_eq!(entry.session_id.as_ref(), "session-nested");
+        assert_eq!(entry.data.message.id.as_deref(), Some("msg-nested-1"));
+        assert_eq!(entry.cost, 0.00014);
     }
 }

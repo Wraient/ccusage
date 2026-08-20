@@ -74,6 +74,21 @@ pub fn load_entries_from_directory(
             }
             entries.push(entry);
         }
+        for entry in load_entries_from_session_message_database(
+            &db_path,
+            tz.as_ref(),
+            shared.mode,
+            pricing.as_ref(),
+            shared,
+            window,
+        ) {
+            if let Some(id) = entry_id(&entry)
+                && !seen.insert(id.to_string())
+            {
+                continue;
+            }
+            entries.push(entry);
+        }
     }
 
     let messages_dir = opencode_dir.join("storage").join("message");
@@ -276,6 +291,99 @@ fn load_entries_from_database(
     entries
 }
 
+fn load_entries_from_session_message_database(
+    db_path: &Path,
+    tz: Option<&JiffTimeZone>,
+    mode: CostMode,
+    pricing: Option<&PricingMap>,
+    shared: &SharedArgs,
+    window: DateWindow,
+) -> Vec<LoadedEntry> {
+    let Ok(connection) =
+        sqlite::Connection::open_with_flags(db_path, sqlite::OpenFlags::new().with_read_only())
+    else {
+        debug_log(
+            shared,
+            format!(
+                "Failed to open OpenCode database for session_message: {}",
+                db_path.display()
+            ),
+        );
+        return Vec::new();
+    };
+    let pushdown = if window.is_unbounded()
+        || time_created_looks_like_millis_for_table(&connection, "session_message")
+    {
+        window.widened_for_pushdown()
+    } else {
+        debug_log(
+            shared,
+            format!(
+                "OpenCode session_message time_created is not millisecond-scale; scanning unfiltered: {}",
+                db_path.display()
+            ),
+        );
+        DateWindow::UNBOUNDED
+    };
+    let statement =
+        prepare_session_message_query(&connection, pushdown).or_else(|| {
+            debug_log(
+                shared,
+                format!(
+                    "Failed to prepare filtered OpenCode session_message query; scanning unfiltered: {}",
+                    db_path.display()
+                ),
+            );
+            prepare_session_message_query(&connection, DateWindow::UNBOUNDED)
+        });
+    let Some(mut statement) = statement else {
+        // Table may not exist on older databases (pre session_message era).
+        return Vec::new();
+    };
+    let mut entries = Vec::new();
+    loop {
+        match statement.next() {
+            Ok(sqlite::State::Row) => {
+                let Ok(id) = statement.read::<String, _>(0) else {
+                    continue;
+                };
+                let Ok(session_id) = statement.read::<String, _>(1) else {
+                    continue;
+                };
+                let Ok(data) = statement.read::<String, _>(2) else {
+                    continue;
+                };
+                if !window.is_unbounded()
+                    && let Some(millis) = extract_message_timestamp(&data)
+                    && !window.contains(millis)
+                {
+                    continue;
+                }
+                let Ok(value) = serde_json::from_str::<OpenCodeMessage>(&data) else {
+                    continue;
+                };
+                if let Some(entry) =
+                    message_value_to_entry(&value, Some(id), Some(session_id), tz, mode, pricing)
+                {
+                    entries.push(entry);
+                }
+            }
+            Ok(sqlite::State::Done) => break,
+            Err(_) => {
+                debug_log(
+                    shared,
+                    format!(
+                        "Failed to query OpenCode session_message database: {}",
+                        db_path.display()
+                    ),
+                );
+                break;
+            }
+        }
+    }
+    entries
+}
+
 fn read_message_file(
     path: &Path,
     tz: Option<&JiffTimeZone>,
@@ -404,20 +512,36 @@ fn prepare_message_query(
     connection: &sqlite::Connection,
     window: DateWindow,
 ) -> Option<sqlite::Statement<'_>> {
+    prepare_query_for_table(connection, "message", window)
+}
+
+fn prepare_session_message_query(
+    connection: &sqlite::Connection,
+    window: DateWindow,
+) -> Option<sqlite::Statement<'_>> {
+    prepare_query_for_table(connection, "session_message", window)
+}
+
+fn prepare_query_for_table<'a>(
+    connection: &'a sqlite::Connection,
+    table: &str,
+    window: DateWindow,
+) -> Option<sqlite::Statement<'a>> {
+    // Table names are internal constants; format is safe.
     let sql = match (window.start, window.end) {
-        (Some(_), Some(_)) => {
-            "SELECT id, session_id, data FROM message WHERE id IN \
-             (SELECT id FROM message WHERE time_created >= ?1 AND time_created < ?2)"
-        }
-        (Some(_), None) => {
-            "SELECT id, session_id, data FROM message WHERE id IN \
-             (SELECT id FROM message WHERE time_created >= ?1)"
-        }
-        (None, Some(_)) => {
-            "SELECT id, session_id, data FROM message WHERE id IN \
-             (SELECT id FROM message WHERE time_created < ?1)"
-        }
-        (None, None) => "SELECT id, session_id, data FROM message",
+        (Some(_), Some(_)) => format!(
+            "SELECT id, session_id, data FROM {table} WHERE id IN \
+             (SELECT id FROM {table} WHERE time_created >= ?1 AND time_created < ?2)"
+        ),
+        (Some(_), None) => format!(
+            "SELECT id, session_id, data FROM {table} WHERE id IN \
+             (SELECT id FROM {table} WHERE time_created >= ?1)"
+        ),
+        (None, Some(_)) => format!(
+            "SELECT id, session_id, data FROM {table} WHERE id IN \
+             (SELECT id FROM {table} WHERE time_created < ?1)"
+        ),
+        (None, None) => format!("SELECT id, session_id, data FROM {table}"),
     };
     let mut statement = connection.prepare(sql).ok()?;
     for (index, bound) in [window.start, window.end].into_iter().flatten().enumerate() {
@@ -440,9 +564,12 @@ const MIN_MILLIS_SCALE: i64 = 100_000_000_000;
 /// millisecond bounds would otherwise exclude every row — those disable the
 /// push-down and leave the payload check to filter.
 fn time_created_looks_like_millis(connection: &sqlite::Connection) -> bool {
-    let Ok(mut statement) = connection
-        .prepare("SELECT max(time_created) FROM (SELECT time_created FROM message LIMIT 8)")
-    else {
+    time_created_looks_like_millis_for_table(connection, "message")
+}
+
+fn time_created_looks_like_millis_for_table(connection: &sqlite::Connection, table: &str) -> bool {
+    let sql = format!("SELECT max(time_created) FROM (SELECT time_created FROM {table} LIMIT 8)");
+    let Ok(mut statement) = connection.prepare(sql) else {
         return false;
     };
     match statement.next() {
@@ -510,6 +637,44 @@ mod tests {
         statement.bind((1, id)).unwrap();
         statement.bind((2, session_id)).unwrap();
         statement.bind((3, data)).unwrap();
+        statement.next().unwrap();
+    }
+
+    fn create_db_session_message(path: &Path, id: &str, session_id: &str, data: &str) {
+        let created = serde_json::from_str::<serde_json::Value>(data)
+            .ok()
+            .and_then(|value| value["time"]["created"].as_i64())
+            .expect("test session_message payload needs time.created");
+        create_db_session_message_with_time(path, id, session_id, created, data);
+    }
+
+    fn create_db_session_message_with_time(
+        path: &Path,
+        id: &str,
+        session_id: &str,
+        time_created_ms: i64,
+        data: &str,
+    ) {
+        let db = sqlite::open(path).unwrap();
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS session_message \
+             (id TEXT PRIMARY KEY, session_id TEXT, time_created INTEGER NOT NULL DEFAULT 0, data TEXT)",
+        )
+        .unwrap();
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS message \
+             (id TEXT PRIMARY KEY, session_id TEXT, time_created INTEGER NOT NULL DEFAULT 0, data TEXT)",
+        )
+        .unwrap();
+        let mut statement = db
+            .prepare(
+                "INSERT INTO session_message (id, session_id, time_created, data) VALUES (?1, ?2, ?3, ?4)",
+            )
+            .unwrap();
+        statement.bind((1, id)).unwrap();
+        statement.bind((2, session_id)).unwrap();
+        statement.bind((3, time_created_ms)).unwrap();
+        statement.bind((4, data)).unwrap();
         statement.next().unwrap();
     }
 
@@ -589,6 +754,62 @@ mod tests {
         assert_eq!(entries.len(), 1);
         assert_eq!(entries[0].session_id.as_ref(), "channel-session-a");
         assert_eq!(entries[0].data.message.usage.input_tokens, 80);
+    }
+
+    #[test]
+    fn loads_messages_from_session_message_table_with_nested_model() {
+        let fixture = fs_fixture!({});
+        create_db_session_message(
+            &fixture.path("opencode.db"),
+            "sess-msg-1",
+            "sess-session-a",
+            r#"{"model":{"id":"muse-spark-1.2-contributor-free","providerID":"opencode"},"time":{"created":1767312000000},"tokens":{"input":120,"output":60,"cache":{"read":12,"write":24}},"cost":0.03}"#,
+        );
+
+        let shared = SharedArgs {
+            mode: CostMode::Display,
+            timezone: Some("UTC".to_string()),
+            ..SharedArgs::default()
+        };
+        let entries = load_entries_from_directory(fixture.root(), &shared).unwrap();
+
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].date, "2026-01-02");
+        assert_eq!(entries[0].session_id.as_ref(), "sess-session-a");
+        assert_eq!(
+            entries[0].model.as_deref(),
+            Some("muse-spark-1.2-contributor-free")
+        );
+        assert_eq!(entries[0].data.message.id.as_deref(), Some("sess-msg-1"));
+        assert_eq!(entries[0].data.message.usage.input_tokens, 120);
+    }
+
+    #[test]
+    fn dedups_across_message_and_session_message_tables() {
+        let fixture = fs_fixture!({});
+        // Same id in both tables — message should win.
+        create_db_message(
+            &fixture.path("opencode.db"),
+            "dup-msg-1",
+            "msg-session-a",
+            r#"{"providerID":"anthropic","modelID":"claude-sonnet-4-20250514","time":{"created":1767312000000},"tokens":{"input":999,"output":999}}"#,
+        );
+        create_db_session_message(
+            &fixture.path("opencode.db"),
+            "dup-msg-1",
+            "sess-session-a",
+            r#"{"model":{"id":"muse-spark-1.2-contributor-free","providerID":"opencode"},"time":{"created":1767312000000},"tokens":{"input":1,"output":1}}"#,
+        );
+
+        let entries = load_entries_from_directory(fixture.root(), &SharedArgs::default()).unwrap();
+
+        assert_eq!(entries.len(), 1);
+        // Message table wins due to insertion order.
+        assert_eq!(entries[0].session_id.as_ref(), "msg-session-a");
+        assert_eq!(
+            entries[0].model.as_deref(),
+            Some("claude-sonnet-4-20250514")
+        );
     }
 
     #[test]
