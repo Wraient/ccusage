@@ -5,7 +5,11 @@ use serde_json::{Map, Value};
 const FLAKE_LOCK_JSON: &str = "../../../flake.lock";
 #[cfg(feature = "fetch-litellm-pricing")]
 const LITELLM_PRICING_JSON: &str = "model_prices_and_context_window.json";
-const OUT_PRICING_JSON: &str = "litellm-pricing.json";
+const OUT_PRICING_JSON: &str = "litellm-pricing.json.deflate";
+const MODELS_DEV_PRICING_JSON: &str = "src/models-dev-pricing.json";
+const OUT_MODELS_DEV_PRICING_JSON: &str = "models-dev-pricing.json.deflate";
+const MODELS_DEV_CATALOG_RULES_JSON: &str = "src/models-dev-catalog-rules.json";
+const OUT_MODELS_DEV_CATALOG_RULES_JSON: &str = "models-dev-catalog-rules.json.deflate";
 const PRICING_JSON_PATH_ENV: &str = "CCUSAGE_PRICING_JSON_PATH";
 #[cfg(feature = "fetch-litellm-pricing")]
 const PRICING_FETCH_TIMEOUT_SECONDS: u64 = 10;
@@ -24,7 +28,36 @@ fn main() {
     };
     let pricing_json = compact_pricing_json(&pricing_json).expect("compact LiteLLM pricing JSON");
 
-    fs::write(out_path, pricing_json).expect("write build-time pricing snapshot");
+    fs::write(out_path, deflate(pricing_json.as_bytes()))
+        .expect("write build-time pricing snapshot");
+
+    embed_snapshot(MODELS_DEV_PRICING_JSON, OUT_MODELS_DEV_PRICING_JSON);
+    embed_snapshot(
+        MODELS_DEV_CATALOG_RULES_JSON,
+        OUT_MODELS_DEV_CATALOG_RULES_JSON,
+    );
+}
+
+/// The committed snapshots stay indented so their regeneration diffs stay
+/// reviewable, but they are embedded verbatim, so the indentation - and, at
+/// 2K+ models, most of the JSON itself - would ship in the binary. Minify and
+/// deflate on the way in; the runtime inflates once on first use.
+fn embed_snapshot(source: &str, out_name: &str) {
+    println!("cargo:rerun-if-changed={source}");
+    let snapshot =
+        fs::read_to_string(source).unwrap_or_else(|error| panic!("read {source}: {error}"));
+    let value = serde_json::from_str::<Value>(&snapshot)
+        .unwrap_or_else(|error| panic!("parse {source}: {error}"));
+    let minified =
+        serde_json::to_string(&value).unwrap_or_else(|error| panic!("serialize {source}: {error}"));
+    fs::write(out_dir_path(out_name), deflate(minified.as_bytes()))
+        .unwrap_or_else(|error| panic!("write {out_name}: {error}"));
+}
+
+/// Raw deflate at maximum effort: the cost is paid once per changed snapshot at
+/// build time, and the level only matters there.
+fn deflate(bytes: &[u8]) -> Vec<u8> {
+    miniz_oxide::deflate::compress_to_vec(bytes, 10)
 }
 
 fn out_dir_path(file_name: &str) -> PathBuf {
@@ -118,23 +151,13 @@ fn required_flake_lock_string_field(
         })
 }
 
-/// Compacts the LiteLLM snapshot into the per-model field subset the runtime
-/// loads, keeping every model that prices both input and output tokens.
-///
-/// There is no family whitelist: agents report models from many vendors
-/// (Gemini via Antigravity, GLM via ZCode, DeepSeek and Qwen via several), and
-/// an offline report must price all of them, not just Claude and GPT. The
-/// compaction itself keeps the embedded snapshot small — a few hundred bytes
-/// per model.
 fn compact_pricing_json(json: &str) -> Option<String> {
     let Value::Object(raw) = serde_json::from_str::<Value>(json).ok()? else {
         return None;
     };
     let mut compact = Map::new();
     for (model, pricing) in raw {
-        // LiteLLM ships one `sample_spec` pseudo-entry documenting the schema.
-        // It prices nothing real and must not become a lookup key.
-        if model == "sample_spec" {
+        if !is_embedded_model(&model) {
             continue;
         }
         let Value::Object(pricing) = pricing else {
@@ -172,4 +195,20 @@ fn compact_pricing_json(json: &str) -> Option<String> {
         }
     }
     serde_json::to_string(&Value::Object(compact)).ok()
+}
+
+fn is_embedded_model(model: &str) -> bool {
+    model.starts_with("claude-")
+        || model.starts_with("anthropic.")
+        || model.starts_with("anthropic/")
+        || model.starts_with("us.anthropic.")
+        || model.starts_with("eu.anthropic.")
+        || model.starts_with("global.anthropic.")
+        || model.starts_with("jp.anthropic.")
+        || model.starts_with("au.anthropic.")
+        || model.starts_with("gpt-")
+        || model.starts_with("openai/")
+        || model.starts_with("azure/")
+        || model.starts_with("zai/")
+        || model.starts_with("openrouter/openai/")
 }
