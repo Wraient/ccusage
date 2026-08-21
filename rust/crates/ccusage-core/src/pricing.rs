@@ -471,8 +471,17 @@ impl PricingMap {
                 .filter(|(candidate, _)| {
                     pricing_key_matches(candidate, model, normalized_model.as_ref())
                 })
-                .max_by(|(left, _), (right, _)| {
-                    left.len().cmp(&right.len()).then_with(|| right.cmp(left))
+                .min_by(|(left, left_pricing), (right, right_pricing)| {
+                    fuzzy_match_rank(left, normalized_model.as_ref())
+                        .cmp(&fuzzy_match_rank(right, normalized_model.as_ref()))
+                        .then_with(|| {
+                            // Prefer the entry that states its cache-read rate
+                            // over one that would inherit a default.
+                            right_pricing
+                                .cache_read_explicit
+                                .cmp(&left_pricing.cache_read_explicit)
+                        })
+                        .then_with(|| left.cmp(right))
                 })
                 .map(|(_, pricing)| *pricing)
         })
@@ -521,8 +530,10 @@ impl PricingMap {
                 .filter(|(candidate, _)| {
                     pricing_key_matches(candidate, model, normalized_model.as_ref())
                 })
-                .max_by(|(left, _), (right, _)| {
-                    left.len().cmp(&right.len()).then_with(|| right.cmp(left))
+                .min_by(|(left, _), (right, _)| {
+                    fuzzy_match_rank(left, normalized_model.as_ref())
+                        .cmp(&fuzzy_match_rank(right, normalized_model.as_ref()))
+                        .then_with(|| left.cmp(right))
                 })
                 .map(|(_, context_limit)| *context_limit)
         })
@@ -1247,6 +1258,19 @@ fn models_dev_entry_has_required_cost(value: &Value) -> bool {
             cost.get("input").is_some_and(Value::is_number)
                 && cost.get("output").is_some_and(Value::is_number)
         })
+}
+
+/// Ranks a fuzzy candidate by how close its key length sits to the queried
+/// name. A candidate shorter than the query only partially explains it, so
+/// longer is more specific there; a candidate longer than the query is the
+/// query wrapped in decoration (provider namespaces, regional markers), where
+/// the shortest wrapper is the most canonical key. Distance from the query
+/// length serves both directions with one measure. Ties then prefer entries
+/// that carry an explicit cache-read rate over ones that would inherit a
+/// default, and finally fall back to the key text so resolution stays
+/// deterministic.
+fn fuzzy_match_rank(candidate: &str, normalized_model: &str) -> usize {
+    candidate.len().abs_diff(normalized_model.len())
 }
 
 /// Matches pricing keys across provider/model aliases while preserving version boundaries.
@@ -2545,6 +2569,45 @@ mod tests {
         assert!(!BUILD_TIME_PRICING_JSON.contains("\"source\""));
         assert!(!BUILD_TIME_PRICING_JSON.contains("vertex_ai/"));
         assert!(BUILD_TIME_PRICING_JSON.contains("claude-opus-4-6"));
+    }
+
+    #[test]
+    fn fuzzy_match_prefers_the_least_decorated_key_at_equal_specificity() {
+        let mut pricing = PricingMap::default();
+        pricing.entries.insert(
+            "claude-haiku-4-5".to_string(),
+            Pricing {
+                input: 1.0,
+                output: 0.0,
+                cache_create: 0.0,
+                cache_read: 0.0,
+                cache_read_explicit: true,
+                input_above_200k: None,
+                output_above_200k: None,
+                cache_create_above_200k: None,
+                cache_read_above_200k: None,
+                long_context_threshold: None,
+                fast_multiplier: 1.0,
+            },
+        );
+        pricing.entries.insert(
+            "bedrock/us-gov-east-1/anthropic.claude-haiku-4-5-20251001-v1:0".to_string(),
+            Pricing {
+                input: 1.2,
+                output: 0.0,
+                cache_create: 0.0,
+                cache_read: 0.0,
+                cache_read_explicit: true,
+                input_above_200k: None,
+                output_above_200k: None,
+                cache_create_above_200k: None,
+                cache_read_above_200k: None,
+                long_context_threshold: None,
+                fast_multiplier: 1.0,
+            },
+        );
+
+        assert_eq!(pricing.find("claude-haiku-4.5").unwrap().input, 1.0);
     }
 
     #[test]
