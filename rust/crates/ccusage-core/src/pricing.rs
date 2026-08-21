@@ -1012,6 +1012,34 @@ impl PricingMap {
                             .find_entry_or_alias(resolved_alias, Fuzzy::Allowed)
                     })
                     .flatten()
+            })
+            // Free-tier gateways append `-free` to a billable model's id while
+            // catalogs publish only the billable name, so a miss on the
+            // suffixed id runs the whole chain once more against the stripped
+            // base.
+            .or_else(|| {
+                let base = strip_free_tier_suffix(model)?;
+                if base == resolved_alias {
+                    return None;
+                }
+                self.find_entry_or_alias(base, Fuzzy::Allowed)
+                    .or_else(|| {
+                        self.enable_models_dev_fallback
+                            .then(|| {
+                                models_dev_pricing().and_then(|pricing| {
+                                    pricing.find_entry_or_alias(base, Fuzzy::Allowed)
+                                })
+                            })
+                            .flatten()
+                    })
+                    .or_else(|| {
+                        self.enable_embedded_models_dev_fallback
+                            .then(|| {
+                                embedded_models_dev_pricing()
+                                    .find_entry_or_alias(base, Fuzzy::Allowed)
+                            })
+                            .flatten()
+                    })
             });
         // Store the result (including None for misses) so repeated lookups
         // for the same model that fails to match any pricing entry are also
@@ -1951,6 +1979,16 @@ fn models_dev_entry_has_required_cost(value: &Value) -> bool {
             cost.get("input").is_some_and(Value::is_number)
                 && cost.get("output").is_some_and(Value::is_number)
         })
+}
+
+/// Strips a trailing `-free` tier suffix from a model id.
+///
+/// Free-tier gateways append `-free` to a billable model's id while pricing
+/// catalogs publish only the billable name, so a miss on the suffixed id
+/// falls back to the stripped base.
+fn strip_free_tier_suffix(model: &str) -> Option<&str> {
+    let base = model.strip_suffix("-free")?;
+    (!base.is_empty()).then_some(base)
 }
 
 /// Ranks a fuzzy candidate by how close its key length sits to the queried
@@ -4130,6 +4168,36 @@ mod tests {
         );
 
         assert_eq!(pricing.find("claude-haiku-4.5").unwrap().input, 1.0);
+    }
+
+    #[test]
+    fn free_tier_ids_fall_back_to_their_billable_base_model() {
+        let mut pricing = PricingMap::default();
+        pricing.load_json(
+            r#"{
+                "muse-spark-1.2-contributor": {
+                    "input_cost_per_token": 0.0000004,
+                    "output_cost_per_token": 0.0000021
+                },
+                "dashscope/deepseek-v4-flash": {
+                    "input_cost_per_token": 0.00000027,
+                    "output_cost_per_token": 0.0000011
+                }
+            }"#,
+        );
+
+        // The suffix never matches a catalog key, so the base id decides.
+        let priced = pricing
+            .find("muse-spark-1.2-contributor-free")
+            .expect("free-tier id prices through its base model");
+        assert_eq!(priced.input, 0.4e-6);
+
+        // Provider-prefixed bases resolve through the same fallback.
+        let prefixed = pricing.find("deepseek-v4-flash-free").unwrap();
+        assert_eq!(prefixed.input, 0.27e-6);
+
+        // A model the catalog does not list at all still misses.
+        assert!(pricing.find("x-preview-f-free").is_none());
     }
 
     #[test]
