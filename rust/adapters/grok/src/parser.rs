@@ -174,6 +174,10 @@ fn split_input_tokens(input: u64, cached_read: u64, cache_creation: u64) -> (u64
 }
 
 /// Pricing lookup candidates for a raw Grok model id (e.g. `grok-4.5-build`).
+///
+/// xAI's namespaces come first because most `modelUsage` keys are Grok models;
+/// third-party invocations (Gemini, DeepSeek, Qwen, GLM) then try their own
+/// vendor namespaces, which pricing snapshots often list without a bare key.
 fn pricing_candidates(raw_model: &str) -> Vec<String> {
     let mut candidates = Vec::new();
     let mut push = |value: String| {
@@ -201,6 +205,9 @@ fn pricing_candidates(raw_model: &str) -> Vec<String> {
     push(normalized.clone());
     push(format!("xai/{normalized}"));
     push(format!("x-ai/{normalized}"));
+    for candidate in ccusage_adapter_common::pricing::vendor_namespaces(stripped) {
+        push(candidate);
+    }
     candidates
 }
 
@@ -632,6 +639,32 @@ mod tests {
                 "grok-4.5".to_string(),
                 "xai/grok-4.5".to_string(),
                 "x-ai/grok-4.5".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn pricing_candidates_append_vendor_namespaces_for_third_party_models() {
+        assert_eq!(
+            pricing_candidates("qwen3.8-max"),
+            vec![
+                "qwen3.8-max".to_string(),
+                "xai/qwen3.8-max".to_string(),
+                "x-ai/qwen3.8-max".to_string(),
+                "qwen/qwen3.8-max".to_string(),
+                "dashscope/qwen3.8-max".to_string(),
+                "openrouter/qwen/qwen3.8-max".to_string(),
+            ]
+        );
+        assert_eq!(
+            pricing_candidates("deepseek-v4-flash-0731"),
+            vec![
+                "deepseek-v4-flash-0731".to_string(),
+                "xai/deepseek-v4-flash-0731".to_string(),
+                "x-ai/deepseek-v4-flash-0731".to_string(),
+                "deepseek/deepseek-v4-flash-0731".to_string(),
+                "dashscope/deepseek-v4-flash-0731".to_string(),
+                "openrouter/deepseek/deepseek-v4-flash-0731".to_string(),
             ]
         );
     }

@@ -7,6 +7,7 @@ use std::{
 use ccusage_core::{LoadedEntry, cli::SharedArgs, date_within_range};
 
 pub mod jsonl;
+pub mod pricing;
 pub mod report;
 
 pub use report::print_table_for_agent;

@@ -228,12 +228,28 @@ fn open_code_model_candidates(model: &str, provider: &str) -> Vec<String> {
     if normalized != base[0] {
         base.push(normalized);
     }
-    let mut candidates = base.clone();
+    let mut candidates = Vec::new();
+    let mut push = |value: String| {
+        if !candidates.contains(&value) {
+            candidates.push(value);
+        }
+    };
+    for model in &base {
+        push(model.clone());
+    }
     if provider != "unknown" {
         let provider = provider.replace('-', "_");
-        candidates.extend(base.into_iter().map(|model| format!("{provider}/{model}")));
+        for model in &base {
+            push(format!("{provider}/{model}"));
+        }
     }
-    candidates.dedup();
+    // OpenCode proxies models from many vendors under its own provider name,
+    // so also try the model family's vendor namespaces for pricing.
+    for model in &base {
+        for candidate in ccusage_adapter_common::pricing::vendor_namespaces(model) {
+            push(candidate);
+        }
+    }
     candidates
 }
 
@@ -436,7 +452,21 @@ mod tests {
                 "claude-sonnet-4-5",
                 "github_copilot/claude-sonnet-4.5",
                 "github_copilot/claude-sonnet-4-5",
+                "anthropic/claude-sonnet-4.5",
+                "vertex_ai/claude-sonnet-4.5",
+                "bedrock/claude-sonnet-4.5",
+                "openrouter/anthropic/claude-sonnet-4.5",
+                "anthropic/claude-sonnet-4-5",
+                "vertex_ai/claude-sonnet-4-5",
+                "bedrock/claude-sonnet-4-5",
+                "openrouter/anthropic/claude-sonnet-4-5",
             ]
+        );
+        // A vendor-proxied model with no bare pricing key still resolves
+        // through its family's namespace.
+        assert!(
+            open_code_model_candidates("grok-4.6", "opencode")
+                .contains(&"xai/grok-4.6".to_string())
         );
     }
 

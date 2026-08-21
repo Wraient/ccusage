@@ -1,5 +1,5 @@
 ---
-source: crates/ccusage/src/adapter/opencode/parser.rs
+source: adapters/opencode/src/parser.rs
 expression: "json!({\n    \"calculated\": entry_snapshot(&calculated), \"displayCost\":\n    entry_snapshot(&display_cost), \"candidates\":\n    {\n        \"anthropic\":\n        open_code_model_candidates(\"claude-sonnet-4.5\", \"anthropic\"),\n        \"copilot\":\n        open_code_model_candidates(\"claude-sonnet-4.5\", \"github-copilot\"),\n        \"geminiAlias\":\n        open_code_model_candidates(\"gemini-3-pro-high\", \"google\"),\n        \"unknownProvider\": open_code_model_candidates(\"gpt-test\", \"unknown\"),\n    }\n})"
 ---
 {
@@ -34,20 +34,40 @@ expression: "json!({\n    \"calculated\": entry_snapshot(&calculated), \"display
       "claude-sonnet-4.5",
       "claude-sonnet-4-5",
       "anthropic/claude-sonnet-4.5",
-      "anthropic/claude-sonnet-4-5"
+      "anthropic/claude-sonnet-4-5",
+      "vertex_ai/claude-sonnet-4.5",
+      "bedrock/claude-sonnet-4.5",
+      "openrouter/anthropic/claude-sonnet-4.5",
+      "vertex_ai/claude-sonnet-4-5",
+      "bedrock/claude-sonnet-4-5",
+      "openrouter/anthropic/claude-sonnet-4-5"
     ],
     "copilot": [
       "claude-sonnet-4.5",
       "claude-sonnet-4-5",
       "github_copilot/claude-sonnet-4.5",
-      "github_copilot/claude-sonnet-4-5"
+      "github_copilot/claude-sonnet-4-5",
+      "anthropic/claude-sonnet-4.5",
+      "vertex_ai/claude-sonnet-4.5",
+      "bedrock/claude-sonnet-4.5",
+      "openrouter/anthropic/claude-sonnet-4.5",
+      "anthropic/claude-sonnet-4-5",
+      "vertex_ai/claude-sonnet-4-5",
+      "bedrock/claude-sonnet-4-5",
+      "openrouter/anthropic/claude-sonnet-4-5"
     ],
     "geminiAlias": [
       "gemini-3-pro-preview",
-      "google/gemini-3-pro-preview"
+      "google/gemini-3-pro-preview",
+      "gemini/gemini-3-pro-preview",
+      "vertex_ai/gemini-3-pro-preview",
+      "openrouter/google/gemini-3-pro-preview"
     ],
     "unknownProvider": [
-      "gpt-test"
+      "gpt-test",
+      "openai/gpt-test",
+      "azure/gpt-test",
+      "openrouter/openai/gpt-test"
     ]
   },
   "displayCost": {

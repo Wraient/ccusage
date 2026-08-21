@@ -186,27 +186,43 @@ pub(super) fn to_loaded_entry(
     }
 }
 
+/// Pricing lookup candidates for a stored model id.
+///
+/// ZCode records GLM ids sometimes upper-cased (`GLM-5.2`), while pricing
+/// snapshots index models lower-cased under vendor namespaces, so try the
+/// bare id, its lower-cased form, then those namespaces.
+fn model_candidates(model: &str) -> Vec<String> {
+    let mut candidates = vec![model.to_string()];
+    let lower = model.to_ascii_lowercase();
+    if lower != model {
+        candidates.push(lower.clone());
+    }
+    candidates.extend(ccusage_adapter_common::pricing::vendor_namespaces(&lower));
+    candidates
+}
+
 /// ZCode stores no cost, so every entry is priced from the pricing map by
 /// model id.
 fn calculate_zcode_cost(entry: &ZcodeEntry, pricing: &PricingMap) -> f64 {
-    let cost = calculate_cost_for_usage(
-        Some(&entry.model),
-        entry.usage,
-        None,
-        CostMode::Calculate,
-        Some(pricing),
-    );
-    if cost.is_finite() && cost > 0.0 {
-        cost
-    } else {
-        0.0
+    for candidate in model_candidates(&entry.model) {
+        let cost = calculate_cost_for_usage(
+            Some(&candidate),
+            entry.usage,
+            None,
+            CostMode::Calculate,
+            Some(pricing),
+        );
+        if cost.is_finite() && cost > 0.0 {
+            return cost;
+        }
     }
+    0.0
 }
 
 fn missing_zcode_pricing(entry: &ZcodeEntry, pricing: &PricingMap) -> Option<String> {
     missing_pricing_model_for_candidates(
         &entry.model,
-        std::iter::once(entry.model.clone()),
+        model_candidates(&entry.model),
         crate::total_usage_tokens(entry.usage),
         Some(pricing),
     )
@@ -215,6 +231,58 @@ fn missing_zcode_pricing(entry: &ZcodeEntry, pricing: &PricingMap) -> Option<Str
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn candidates_fall_back_to_lower_case_and_vendor_namespaces() {
+        assert_eq!(
+            model_candidates("GLM-5.2"),
+            vec![
+                "GLM-5.2",
+                "glm-5.2",
+                "zai/glm-5.2",
+                "zhipuai/glm-5.2",
+                "dashscope/glm-5.2",
+            ]
+        );
+        assert_eq!(
+            model_candidates("glm-5.3"),
+            vec![
+                "glm-5.3",
+                "zai/glm-5.3",
+                "zhipuai/glm-5.3",
+                "dashscope/glm-5.3"
+            ]
+        );
+        assert_eq!(model_candidates("mystery-model"), vec!["mystery-model"]);
+    }
+
+    #[test]
+    fn prices_a_mixed_case_model_through_its_vendor_namespace() {
+        let mut pricing = PricingMap::default();
+        pricing.load_json(
+            r#"{
+                "zai/glm-5.2": {
+                    "input_cost_per_token": 0.000001,
+                    "output_cost_per_token": 0.000002
+                }
+            }"#,
+        );
+        let entry = model_usage_entry(
+            "usage-1",
+            "sess-a",
+            "GLM-5.2",
+            100,
+            10,
+            0,
+            0,
+            1_786_089_169_225,
+            "completed",
+        )
+        .unwrap();
+
+        assert!(calculate_zcode_cost(&entry, &pricing) > 0.0);
+        assert_eq!(missing_zcode_pricing(&entry, &pricing), None);
+    }
 
     #[test]
     fn nets_gross_input_and_keeps_cache_buckets() {
@@ -241,30 +309,34 @@ mod tests {
 
     #[test]
     fn skips_running_and_zero_token_requests() {
-        assert!(model_usage_entry(
-            "usage-1",
-            "sess-a",
-            "glm-5.2",
-            10,
-            0,
-            0,
-            0,
-            1_786_089_169_225,
-            "running",
-        )
-        .is_none());
-        assert!(model_usage_entry(
-            "usage-2",
-            "sess-a",
-            "glm-5.2",
-            0,
-            0,
-            0,
-            0,
-            1_786_089_169_225,
-            "error",
-        )
-        .is_none());
+        assert!(
+            model_usage_entry(
+                "usage-1",
+                "sess-a",
+                "glm-5.2",
+                10,
+                0,
+                0,
+                0,
+                1_786_089_169_225,
+                "running",
+            )
+            .is_none()
+        );
+        assert!(
+            model_usage_entry(
+                "usage-2",
+                "sess-a",
+                "glm-5.2",
+                0,
+                0,
+                0,
+                0,
+                1_786_089_169_225,
+                "error",
+            )
+            .is_none()
+        );
     }
 
     #[test]
@@ -287,7 +359,8 @@ mod tests {
         let user_data = r#"{"role":"user","tokens":{"input":10,"output":0}}"#;
         assert!(message_entry("msg-1", "sess-a", 1781978391174, user_data).is_none());
 
-        let error_data = r#"{"role":"assistant","modelID":"glm-5.2","error":{"name":"AiSdkModelAdapterError"}}"#;
+        let error_data =
+            r#"{"role":"assistant","modelID":"glm-5.2","error":{"name":"AiSdkModelAdapterError"}}"#;
         assert!(message_entry("msg-2", "sess-a", 1781978391174, error_data).is_none());
 
         let zero_tokens = r#"{"role":"assistant","modelID":"glm-5.2","tokens":{"total":0,"input":0,"output":0,"cache":{"read":0,"write":0}}}"#;

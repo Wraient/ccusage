@@ -4,8 +4,7 @@ use jiff::tz::TimeZone as JiffTimeZone;
 
 use crate::{
     LoadedEntry, PricingMap, TimestampMs, TokenUsageRaw, UsageEntry, UsageMessage,
-    calculate_cost_for_usage, cli::CostMode, format_date_tz,
-    missing_pricing_model_for_candidates,
+    calculate_cost_for_usage, cli::CostMode, format_date_tz, missing_pricing_model_for_candidates,
 };
 
 use super::proto::ModelUsage;
@@ -30,33 +29,8 @@ fn placeholder_model(model_id: u64) -> String {
 /// `claude-sonnet-4-5`, while pricing snapshots index them under provider
 /// namespaces such as `anthropic/` or `openrouter/google/`.
 pub(super) fn model_candidates(model: &str) -> Vec<String> {
-    let mut candidates = Vec::new();
-    candidates.push(model.to_string());
-    if model.starts_with("gemini") || model.contains("gemini") {
-        candidates.push(format!("gemini/{model}"));
-        candidates.push(format!("vertex_ai/{model}"));
-        candidates.push(format!("google/{model}"));
-        candidates.push(format!("openrouter/google/{model}"));
-    } else if model.starts_with("claude") {
-        candidates.push(format!("anthropic/{model}"));
-        candidates.push(format!("vertex_ai/{model}"));
-        candidates.push(format!("bedrock/{model}"));
-        candidates.push(format!("openrouter/anthropic/{model}"));
-    } else if model.starts_with("gpt")
-        || model.starts_with("o1")
-        || model.starts_with("o3")
-        || model.starts_with("o4")
-    {
-        candidates.push(format!("openai/{model}"));
-        candidates.push(format!("azure/{model}"));
-        candidates.push(format!("openrouter/openai/{model}"));
-    } else if model.starts_with("deepseek") {
-        candidates.push(format!("deepseek/{model}"));
-        candidates.push(format!("openrouter/deepseek/{model}"));
-    } else if model.starts_with("qwen") {
-        candidates.push(format!("qwen/{model}"));
-        candidates.push(format!("openrouter/qwen/{model}"));
-    }
+    let mut candidates = vec![model.to_string()];
+    candidates.extend(ccusage_adapter_common::pricing::vendor_namespaces(model));
     candidates
 }
 
@@ -302,6 +276,15 @@ mod tests {
                 "vertex_ai/claude-sonnet-4-5",
                 "bedrock/claude-sonnet-4-5",
                 "openrouter/anthropic/claude-sonnet-4-5",
+            ]
+        );
+        assert_eq!(
+            model_candidates("deepseek-v4-flash"),
+            vec![
+                "deepseek-v4-flash",
+                "deepseek/deepseek-v4-flash",
+                "dashscope/deepseek-v4-flash",
+                "openrouter/deepseek/deepseek-v4-flash",
             ]
         );
         assert_eq!(model_candidates("mystery-model"), vec!["mystery-model"]);
