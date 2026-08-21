@@ -23,9 +23,11 @@ import {
 /**
  * Model ids/keys we keep in the committed snapshot.
  * Claude remains first-class; Kimi/Moonshot is included so offline pricing can
- * cover models LiteLLM has not published yet (for example kimi-k3).
+ * cover models LiteLLM has not published yet (for example kimi-k3). Muse Spark
+ * and GLM follow the same rule: their coding-harness usage prices from
+ * models.dev because LiteLLM does not list them.
  */
-const KEEP = /claude|anthropic|kimi|moonshot/i;
+const KEEP = /claude|anthropic|kimi|moonshot|muse|spark|glm/i;
 
 type Cost = {
 	input?: number | null;

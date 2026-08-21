@@ -19,6 +19,66 @@
 			"context": 262144
 		}
 	},
+	"@cf/zai-org/glm-4.7-flash": {
+		"cost": {
+			"input": 0.0605,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"@cf/zai-org/glm-5.2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 262144
+		}
+	},
+	"GLM-4.6-Derestricted-v5": {
+		"cost": {
+			"cache_read": 0.2,
+			"input": 0.4,
+			"output": 1.5
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"GLM-4.7": {
+		"cost": {
+			"input": 3.5,
+			"output": 14
+		},
+		"limit": {
+			"context": 204800
+		}
+	},
+	"GLM-5.1": {
+		"cost": {
+			"cache_read": 0.1,
+			"cache_write": 0,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"GLM-5.2": {
+		"cost": {
+			"cache_read": 0.2,
+			"cache_write": 0,
+			"input": 1.2,
+			"output": 4.1
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
 	"Gemma-4-31B-Claude-4.6-Opus-Reasoning-Distilled": {
 		"cost": {
 			"cache_read": 0.0306,
@@ -60,6 +120,76 @@
 			"context": 262000
 		}
 	},
+	"Pro/zai-org/GLM-5": {
+		"cost": {
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 205000
+		}
+	},
+	"Pro/zai-org/GLM-5.1": {
+		"cost": {
+			"cache_read": 0.26,
+			"cache_write": 0,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 205000
+		}
+	},
+	"TEE/glm-4.7": {
+		"cost": {
+			"cache_read": 0.425,
+			"input": 0.85,
+			"output": 3.3
+		},
+		"limit": {
+			"context": 131000
+		}
+	},
+	"TEE/glm-5.1": {
+		"cost": {
+			"cache_read": 0.3,
+			"input": 1.5,
+			"output": 5.25
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"TEE/glm-5.1-thinking": {
+		"cost": {
+			"cache_read": 0.3,
+			"input": 1.5,
+			"output": 5.25
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"TEE/glm-5.2": {
+		"cost": {
+			"cache_read": 0.5,
+			"input": 1.4,
+			"output": 4.6
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"TEE/glm-5.2:thinking": {
+		"cost": {
+			"cache_read": 0.5,
+			"input": 1.4,
+			"output": 4.6
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
 	"TEE/kimi-k2.6": {
 		"cost": {
 			"cache_read": 0.375,
@@ -78,6 +208,46 @@
 		},
 		"limit": {
 			"context": 1048576
+		}
+	},
+	"THUDM/GLM-4-32B-0414": {
+		"cost": {
+			"cache_read": 0.1,
+			"input": 0.2,
+			"output": 0.2
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"THUDM/GLM-4-9B-0414": {
+		"cost": {
+			"cache_read": 0.1,
+			"input": 0.2,
+			"output": 0.2
+		},
+		"limit": {
+			"context": 32000
+		}
+	},
+	"THUDM/GLM-Z1-9B-0414": {
+		"cost": {
+			"cache_read": 0.1,
+			"input": 0.2,
+			"output": 0.2
+		},
+		"limit": {
+			"context": 32000
+		}
+	},
+	"accounts/fireworks/models/glm-5p2": {
+		"cost": {
+			"cache_read": 0.14,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1048575
 		}
 	},
 	"accounts/fireworks/models/kimi-k2p6": {
@@ -108,6 +278,16 @@
 		},
 		"limit": {
 			"context": 1048576
+		}
+	},
+	"accounts/fireworks/routers/glm-5p2-fast": {
+		"cost": {
+			"cache_read": 0.21,
+			"input": 2.1,
+			"output": 6.6
+		},
+		"limit": {
+			"context": 1048575
 		}
 	},
 	"accounts/fireworks/routers/kimi-k2p6-fast": {
@@ -148,6 +328,17 @@
 		},
 		"limit": {
 			"context": 1048576
+		}
+	},
+	"alicloud-glm-5.1": {
+		"cost": {
+			"cache_read": 0.169,
+			"cache_write": 1.05625,
+			"input": 0.84,
+			"output": 3.38
+		},
+		"limit": {
+			"context": 200000
 		}
 	},
 	"anthropic--claude-3-haiku": {
@@ -2329,6 +2520,16 @@
 			"context": 1000000
 		}
 	},
+	"cline-pass/glm-5.2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
 	"cline-pass/kimi-k2.6": {
 		"cost": {
 			"cache_read": 0.16,
@@ -2357,6 +2558,16 @@
 		},
 		"limit": {
 			"context": 1048576
+		}
+	},
+	"coding-glm-5.1": {
+		"cost": {
+			"cache_read": 0.013,
+			"input": 0.06,
+			"output": 0.22
+		},
+		"limit": {
+			"context": 200000
 		}
 	},
 	"databricks-claude-haiku-4-5": {
@@ -2442,6 +2653,16 @@
 			"cache_write": 3.75,
 			"input": 3,
 			"output": 15
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"databricks-glm-5-2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
 		},
 		"limit": {
 			"context": 1000000
@@ -2577,6 +2798,554 @@
 			"context": 1000000
 		}
 	},
+	"fireworks/glm-5.2": {
+		"cost": {
+			"cache_read": 0.14,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-4": {
+		"cost": {
+			"cache_read": 7.497,
+			"input": 14.994,
+			"output": 14.994
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4-32b-0414-128k": {
+		"cost": {
+			"input": 0.1,
+			"output": 0.1
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4-air": {
+		"cost": {
+			"cache_read": 0.1003,
+			"input": 0.2006,
+			"output": 0.2006
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4-air-0111": {
+		"cost": {
+			"cache_read": 0.0697,
+			"input": 0.1394,
+			"output": 0.1394
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4-airx": {
+		"cost": {
+			"cache_read": 1.003,
+			"input": 2.006,
+			"output": 2.006
+		},
+		"limit": {
+			"context": 8000
+		}
+	},
+	"glm-4-flash": {
+		"cost": {
+			"cache_read": 0.05015,
+			"input": 0.1003,
+			"output": 0.1003
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4-long": {
+		"cost": {
+			"cache_read": 0.1003,
+			"input": 0.2006,
+			"output": 0.2006
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-4-plus": {
+		"cost": {
+			"cache_read": 3.7485,
+			"input": 7.497,
+			"output": 7.497
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4-plus-0111": {
+		"cost": {
+			"cache_read": 4.998,
+			"input": 9.996,
+			"output": 9.996
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4.1v-thinking-flash": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 0.3,
+			"output": 0.3
+		},
+		"limit": {
+			"context": 64000
+		}
+	},
+	"glm-4.1v-thinking-flashx": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 0.3,
+			"output": 0.3
+		},
+		"limit": {
+			"context": 64000
+		}
+	},
+	"glm-4.5": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 131000
+		}
+	},
+	"glm-4.5-air": {
+		"cost": {
+			"cache_read": 0.025,
+			"cache_write": 0,
+			"input": 0.13,
+			"output": 0.85
+		},
+		"limit": {
+			"context": 131000
+		}
+	},
+	"glm-4.5-airx": {
+		"cost": {
+			"cache_read": 0.22,
+			"input": 1.1,
+			"output": 4.5
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4.5-x": {
+		"cost": {
+			"cache_read": 0.45,
+			"input": 2.2,
+			"output": 8.9
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4.5v": {
+		"cost": {
+			"cache_read": 0.11,
+			"input": 0.6,
+			"output": 1.8
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4.6": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.55,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 204800
+		}
+	},
+	"glm-4.6v": {
+		"cost": {
+			"cache_read": 0.05,
+			"input": 0.3,
+			"output": 0.9
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"glm-4.6v-flashx": {
+		"cost": {
+			"cache_read": 0.004,
+			"input": 0.04,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"glm-4.7": {
+		"cost": {
+			"cache_read": 0.05,
+			"cache_write": 0,
+			"input": 0.25,
+			"output": 1.1
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"glm-4.7-flash": {
+		"cost": {
+			"cache_read": 0.008,
+			"cache_write": 0,
+			"input": 0.04,
+			"output": 0.3
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"glm-4.7-flashx": {
+		"cost": {
+			"cache_read": 0.01,
+			"cache_write": 0,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"glm-5": {
+		"cost": {
+			"cache_read": 0.1,
+			"cache_write": 0,
+			"input": 0.48,
+			"output": 1.9
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"glm-5-1": {
+		"cost": {
+			"cache_read": 0.165,
+			"input": 0.825,
+			"output": 3.301
+		},
+		"limit": {
+			"context": 202000
+		}
+	},
+	"glm-5-2": {
+		"cost": {
+			"cache_read": 1.4,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5-turbo": {
+		"cost": {
+			"cache_read": 0.296,
+			"cache_write": 1.544,
+			"input": 1.186,
+			"output": 3.955
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"glm-5.1": {
+		"cost": {
+			"cache_read": 0.08,
+			"cache_write": 0,
+			"input": 0.45,
+			"output": 2.15
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"glm-5.2": {
+		"cost": {
+			"cache_read": 0.28,
+			"cache_write": 0,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-caveman": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-caveman-lite": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-caveman-ultra": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-fast": {
+		"cost": {
+			"cache_read": 0.3625,
+			"input": 1.45,
+			"output": 4.5
+		},
+		"limit": {
+			"context": 1048560
+		}
+	},
+	"glm-5.2-flex": {
+		"cost": {
+			"cache_read": 0.18125,
+			"input": 0.725,
+			"output": 2.25
+		},
+		"limit": {
+			"context": 1048560
+		}
+	},
+	"glm-5.2-fp4": {
+		"cost": {
+			"cache_read": 0,
+			"input": 1.12,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"glm-5.2-honey": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-honey-lite": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-honey-ultra": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-nitro": {
+		"cost": {
+			"input": 0.8,
+			"output": 2.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"glm-5.2-ponytail": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-ponytail-lite": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-ponytail-ultra": {
+		"cost": {
+			"cache_read": 0.3135,
+			"input": 1.254,
+			"output": 5.016
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"glm-5.2-short": {
+		"cost": {
+			"cache_read": 0.3625,
+			"input": 1.45,
+			"output": 4.5
+		},
+		"limit": {
+			"context": 199984
+		}
+	},
+	"glm-5.2-short-fast": {
+		"cost": {
+			"cache_read": 0.3625,
+			"input": 1.45,
+			"output": 4.5
+		},
+		"limit": {
+			"context": 199984
+		}
+	},
+	"glm-5.2-short-fast-flex": {
+		"cost": {
+			"cache_read": 0.18125,
+			"input": 0.725,
+			"output": 2.25
+		},
+		"limit": {
+			"context": 199984
+		}
+	},
+	"glm-5.2-short-flex": {
+		"cost": {
+			"cache_read": 0.18125,
+			"input": 0.725,
+			"output": 2.25
+		},
+		"limit": {
+			"context": 199984
+		}
+	},
+	"glm-5.2@eu": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.2,
+			"output": 4.2
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"glm-5v-turbo": {
+		"cost": {
+			"cache_read": 0.296,
+			"cache_write": 1.544,
+			"input": 1.186,
+			"output": 3.955
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"glm-for-coding": {
+		"cost": {
+			"input": 0.086,
+			"output": 0.343
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"glm-z1-air": {
+		"cost": {
+			"cache_read": 0.035,
+			"input": 0.07,
+			"output": 0.07
+		},
+		"limit": {
+			"context": 32000
+		}
+	},
+	"glm-z1-airx": {
+		"cost": {
+			"cache_read": 0.35,
+			"input": 0.7,
+			"output": 0.7
+		},
+		"limit": {
+			"context": 32000
+		}
+	},
+	"glm-zero-preview": {
+		"cost": {
+			"cache_read": 0.901,
+			"input": 1.802,
+			"output": 1.802
+		},
+		"limit": {
+			"context": 8000
+		}
+	},
+	"glm5.2": {
+		"cost": {
+			"input": 2.31,
+			"output": 6
+		},
+		"limit": {
+			"context": 96000
+		}
+	},
+	"glm5.2-fast": {
+		"cost": {
+			"cache_read": 0.5,
+			"cache_write": 0,
+			"input": 3,
+			"output": 10.25
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
 	"global.anthropic.claude-fable-5": {
 		"cost": {
 			"cache_read": 1,
@@ -2687,6 +3456,16 @@
 			"context": 1000000
 		}
 	},
+	"gpt-5.3-codex-spark": {
+		"cost": {
+			"cache_read": 0.175,
+			"input": 1.75,
+			"output": 14
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
 	"hf:moonshotai/Kimi-K2.7-Code": {
 		"cost": {
 			"cache_read": 0.95,
@@ -2702,6 +3481,26 @@
 			"cache_read": 0.45,
 			"input": 3,
 			"output": 15
+		},
+		"limit": {
+			"context": 524288
+		}
+	},
+	"hf:zai-org/GLM-4.7-Flash": {
+		"cost": {
+			"cache_read": 0.1,
+			"input": 0.1,
+			"output": 0.5
+		},
+		"limit": {
+			"context": 196608
+		}
+	},
+	"hf:zai-org/GLM-5.2": {
+		"cost": {
+			"cache_read": 1.4,
+			"input": 1.4,
+			"output": 4.4
 		},
 		"limit": {
 			"context": 524288
@@ -3110,6 +3909,47 @@
 			"context": 262144
 		}
 	},
+	"meta/muse-glimmer-30b": {
+		"cost": {
+			"cache_read": 0.04,
+			"input": 0.3,
+			"output": 1.2
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"meta/muse-spark-1.1": {
+		"cost": {
+			"cache_read": 0.15,
+			"cache_write": 1.25,
+			"input": 1.25,
+			"output": 4.25
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"meta/muse-spark-1.2": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 1.25,
+			"output": 4.25
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"meta/muse-spark-1.2-contributor": {
+		"cost": {
+			"cache_read": 0.002,
+			"input": 0.1,
+			"output": 0.2
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
 	"moonshot-ai/kimi-k2.7-code": {
 		"cost": {
 			"cache_read": 0.19,
@@ -3487,6 +4327,56 @@
 			"context": 1048576
 		}
 	},
+	"muse-spark-1-1": {
+		"cost": {
+			"cache_read": 1,
+			"input": 1.25,
+			"output": 4.25
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"muse-spark-1.1": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 1.25,
+			"output": 4.25
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"muse-spark-1.2": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 1.25,
+			"output": 4.25
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"muse-spark-1.2-contributor": {
+		"cost": {
+			"cache_read": 0.002,
+			"input": 0.1,
+			"output": 0.2
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"novita/glm-5": {
+		"cost": {
+			"cache_read": 0.2,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 205000
+		}
+	},
 	"novita/kimi-k2.5": {
 		"cost": {
 			"cache_read": 0.1,
@@ -3505,6 +4395,16 @@
 		},
 		"limit": {
 			"context": 262144
+		}
+	},
+	"olafangensan-glm-4.7-flash-heretic": {
+		"cost": {
+			"cache_read": 0.035,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
 		}
 	},
 	"stealth/claude-opus-4.6": {
@@ -3549,6 +4449,36 @@
 		},
 		"limit": {
 			"context": 1000000
+		}
+	},
+	"subconscious/glm-5.2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"umans-glm-5.1": {
+		"cost": {
+			"cache_read": 0.29,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 204800
+		}
+	},
+	"umans-glm-5.2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 405504
 		}
 	},
 	"umans-kimi-k2.7": {
@@ -3710,6 +4640,982 @@
 		},
 		"limit": {
 			"context": 256000
+		}
+	},
+	"workers-ai/@cf/zai-org/glm-4.7-flash": {
+		"cost": {
+			"input": 0.06,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"workers-ai/@cf/zai-org/glm-5.2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 262144
+		}
+	},
+	"z-ai-glm-5-turbo": {
+		"cost": {
+			"cache_read": 0.24,
+			"input": 1.2,
+			"output": 4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai-glm-5v-turbo": {
+		"cost": {
+			"cache_read": 0.3,
+			"input": 1.5,
+			"output": 5
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-4.5": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"z-ai/glm-4.5-air": {
+		"cost": {
+			"cache_read": 0.03,
+			"cache_write": 0,
+			"input": 0.2,
+			"output": 1.1
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"z-ai/glm-4.5v": {
+		"cost": {
+			"cache_read": 0.11,
+			"input": 0.6,
+			"output": 1.8
+		},
+		"limit": {
+			"context": 65536
+		}
+	},
+	"z-ai/glm-4.5v:thinking": {
+		"cost": {
+			"cache_read": 0.3,
+			"input": 0.6,
+			"output": 1.8
+		},
+		"limit": {
+			"context": 64000
+		}
+	},
+	"z-ai/glm-4.6": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 204800
+		}
+	},
+	"z-ai/glm-4.6:thinking": {
+		"cost": {
+			"cache_read": 0.175,
+			"input": 0.35,
+			"output": 1.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-4.6v": {
+		"cost": {
+			"cache_read": 0.055,
+			"input": 0.3,
+			"output": 0.9
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"z-ai/glm-4.6v-flash": {
+		"cost": {
+			"cache_read": 0.0043,
+			"input": 0.02,
+			"output": 0.21
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-4.7": {
+		"cost": {
+			"cache_read": 0.1,
+			"cache_write": 0.47,
+			"input": 0.47,
+			"output": 2.16
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-4.7-flash": {
+		"cost": {
+			"cache_read": 0.01,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"z-ai/glm-4.7-flashx": {
+		"cost": {
+			"cache_read": 0.015,
+			"input": 0.072,
+			"output": 0.43
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-5": {
+		"cost": {
+			"cache_read": 0.16,
+			"cache_write": 0.6,
+			"input": 0.6,
+			"output": 3
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-5-turbo": {
+		"cost": {
+			"cache_read": 0.18,
+			"cache_write": 0.9,
+			"input": 0.9,
+			"output": 3.7
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-5.1": {
+		"cost": {
+			"cache_read": 0.2,
+			"cache_write": 1,
+			"input": 1,
+			"output": 3.8
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"z-ai/glm-5.2": {
+		"cost": {
+			"cache_read": 0.2,
+			"cache_write": 0,
+			"input": 1.05,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"z-ai/glm-5v-turbo": {
+		"cost": {
+			"cache_read": 0.3,
+			"cache_write": 1.5,
+			"input": 1.2,
+			"output": 4
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"z-ai/glm-5v-turbo:thinking": {
+		"cost": {
+			"cache_read": 0.24,
+			"input": 1.2,
+			"output": 4
+		},
+		"limit": {
+			"context": 202800
+		}
+	},
+	"zai-glm-4.7": {
+		"cost": {
+			"cache_read": 2.25,
+			"cache_write": 0,
+			"input": 2.25,
+			"output": 2.75
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"zai-glm-5-1": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 198000
+		}
+	},
+	"zai-glm-5.1": {
+		"cost": {
+			"cache_read": 0.183112,
+			"input": 0.845,
+			"output": 3.38
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org-glm-4.6": {
+		"cost": {
+			"cache_read": 0.08,
+			"input": 0.43,
+			"output": 1.75
+		},
+		"limit": {
+			"context": 198000
+		}
+	},
+	"zai-org-glm-4.7": {
+		"cost": {
+			"cache_read": 0.11,
+			"input": 0.55,
+			"output": 2.65
+		},
+		"limit": {
+			"context": 198000
+		}
+	},
+	"zai-org-glm-4.7-flash": {
+		"cost": {
+			"cache_read": 0.01,
+			"input": 0.06,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org-glm-5": {
+		"cost": {
+			"cache_read": 0.2,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 198000
+		}
+	},
+	"zai-org-glm-5-1": {
+		"cost": {
+			"cache_read": 0.286,
+			"input": 1.54,
+			"output": 4.84
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org-glm-5-2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"zai-org/GLM-4.5": {
+		"cost": {
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"zai-org/GLM-4.5-Air": {
+		"cost": {
+			"cache_read": 0.06,
+			"input": 0.12,
+			"output": 0.8
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org/GLM-4.5-Air:thinking": {
+		"cost": {
+			"cache_read": 0.06,
+			"input": 0.12,
+			"output": 0.8
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org/GLM-4.5-FP8": {
+		"cost": {
+			"input": 0.2,
+			"output": 0.8
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"zai-org/GLM-4.5:thinking": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 0.3,
+			"output": 1.3
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org/GLM-4.5V": {
+		"cost": {
+			"input": 0.6,
+			"output": 1.8
+		},
+		"limit": {
+			"context": 65536
+		}
+	},
+	"zai-org/GLM-4.6": {
+		"cost": {
+			"cache_read": 0.2,
+			"cache_write": 0.8,
+			"input": 0.4,
+			"output": 1.75
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/GLM-4.6-turbo": {
+		"cost": {
+			"cache_read": 0.5,
+			"input": 1,
+			"output": 3
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/GLM-4.6-turbo:thinking": {
+		"cost": {
+			"cache_read": 0.5,
+			"input": 1,
+			"output": 3
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/GLM-4.7": {
+		"cost": {
+			"cache_read": 0.12,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/GLM-4.7-Flash": {
+		"cost": {
+			"cache_read": 0.01,
+			"input": 0.06,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai-org/GLM-5": {
+		"cost": {
+			"cache_read": 0.1,
+			"cache_write": 1,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/GLM-5-FP8": {
+		"cost": {
+			"cache_read": 0.12,
+			"input": 0.6,
+			"output": 1.92
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai-org/GLM-5.1": {
+		"cost": {
+			"cache_read": 0.182,
+			"cache_write": 0.98,
+			"input": 0.98,
+			"output": 3.08
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai-org/GLM-5.1-FP8": {
+		"cost": {
+			"cache_read": 0,
+			"cache_write": 0,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai-org/GLM-5.1-TEE": {
+		"cost": {
+			"cache_read": 0.09799999999999998,
+			"input": 0.98,
+			"output": 3.08
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai-org/GLM-5.2": {
+		"cost": {
+			"cache_read": 0.17,
+			"cache_write": 0,
+			"input": 0.75,
+			"output": 2.9
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"zai-org/GLM-5.2-FP8": {
+		"cost": {
+			"cache_read": 0.26,
+			"cache_write": 0,
+			"input": 1.2,
+			"output": 4.2
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai-org/GLM-5.2-Fast": {
+		"cost": {
+			"cache_read": 0.21,
+			"input": 2.1,
+			"output": 6.6
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"zai-org/GLM-5.2-TEE": {
+		"cost": {
+			"cache_read": 0.12499999999999997,
+			"input": 1.25,
+			"output": 3.95
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"zai-org/GLM-5V-Turbo": {
+		"cost": {
+			"cache_read": 0.24,
+			"cache_write": 0,
+			"input": 1.2,
+			"output": 4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/autoglm-phone-9b-multilingual": {
+		"cost": {
+			"input": 0.035,
+			"output": 0.138
+		},
+		"limit": {
+			"context": 65536
+		}
+	},
+	"zai-org/glm-4.5": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 0.3,
+			"output": 1.3
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org/glm-4.5-air": {
+		"cost": {
+			"cache_read": 0.025,
+			"input": 0.13,
+			"output": 0.85
+		},
+		"limit": {
+			"context": 131072
+		}
+	},
+	"zai-org/glm-4.5v": {
+		"cost": {
+			"cache_read": 0.11,
+			"input": 0.6,
+			"output": 1.8
+		},
+		"limit": {
+			"context": 65536
+		}
+	},
+	"zai-org/glm-4.6": {
+		"cost": {
+			"cache_read": 0.11,
+			"input": 0.55,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 204800
+		}
+	},
+	"zai-org/glm-4.6-original": {
+		"cost": {
+			"cache_read": 0.175,
+			"input": 0.35,
+			"output": 1.4
+		},
+		"limit": {
+			"context": 256000
+		}
+	},
+	"zai-org/glm-4.6v": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 0.3,
+			"output": 0.9
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org/glm-4.6v-flash-original": {
+		"cost": {
+			"cache_read": 0.05,
+			"input": 0.1,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org/glm-4.6v-original": {
+		"cost": {
+			"cache_read": 0.3,
+			"input": 0.6,
+			"output": 0.9
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai-org/glm-4.7": {
+		"cost": {
+			"cache_read": 0.1,
+			"input": 0.2,
+			"output": 0.8
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7-flash": {
+		"cost": {
+			"cache_read": 0.035,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7-flash-original": {
+		"cost": {
+			"cache_read": 0.035,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7-flash-original:thinking": {
+		"cost": {
+			"cache_read": 0.035,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7-flash:thinking": {
+		"cost": {
+			"cache_read": 0.035,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7-maas": {
+		"cost": {
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7-original": {
+		"cost": {
+			"cache_read": 0.11,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7-original:thinking": {
+		"cost": {
+			"cache_read": 0.11,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-4.7:thinking": {
+		"cost": {
+			"cache_read": 0.1,
+			"input": 0.2,
+			"output": 0.8
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-5": {
+		"cost": {
+			"cache_read": 0.13,
+			"input": 0.5,
+			"output": 2.55
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-5-maas": {
+		"cost": {
+			"cache_read": 0.1,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai-org/glm-5-original": {
+		"cost": {
+			"cache_read": 0.2,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-5-original:thinking": {
+		"cost": {
+			"cache_read": 0.2,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-5.1": {
+		"cost": {
+			"cache_read": 0.133,
+			"input": 0.615,
+			"output": 2.46
+		},
+		"limit": {
+			"context": 202000
+		}
+	},
+	"zai-org/glm-5.1:thinking": {
+		"cost": {
+			"cache_read": 0.15,
+			"input": 0.75,
+			"output": 2.6
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-5.2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"zai-org/glm-5.2:thinking": {
+		"cost": {
+			"cache_read": 0.078,
+			"input": 0.42,
+			"output": 1.32
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"zai-org/glm-5:thinking": {
+		"cost": {
+			"cache_read": 0.13,
+			"input": 0.5,
+			"output": 2.55
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai-org/glm-latest": {
+		"cost": {
+			"cache_read": 0.078,
+			"input": 0.42,
+			"output": 1.32
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"zai.glm-4.7": {
+		"cost": {
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 204800
+		}
+	},
+	"zai.glm-4.7-flash": {
+		"cost": {
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai.glm-5": {
+		"cost": {
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 202752
+		}
+	},
+	"zai/glm-4.5": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai/glm-4.5-air": {
+		"cost": {
+			"cache_read": 0.03,
+			"cache_write": 0,
+			"input": 0.2,
+			"output": 1.1
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai/glm-4.5v": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.6,
+			"output": 1.8
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai/glm-4.6": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai/glm-4.6v": {
+		"cost": {
+			"cache_read": 0.05,
+			"input": 0.3,
+			"output": 0.9
+		},
+		"limit": {
+			"context": 128000
+		}
+	},
+	"zai/glm-4.7": {
+		"cost": {
+			"cache_read": 0.11,
+			"cache_write": 0,
+			"input": 0.6,
+			"output": 2.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai/glm-4.7-flash": {
+		"cost": {
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai/glm-4.7-flashx": {
+		"cost": {
+			"cache_read": 0.01,
+			"cache_write": 0,
+			"input": 0.07,
+			"output": 0.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai/glm-5": {
+		"cost": {
+			"cache_read": 0.2,
+			"cache_write": 0,
+			"input": 1,
+			"output": 3.2
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai/glm-5-turbo": {
+		"cost": {
+			"cache_read": 0.24,
+			"cache_write": 0,
+			"input": 1.2,
+			"output": 4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai/glm-5.1": {
+		"cost": {
+			"cache_read": 0.26,
+			"cache_write": 0,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 200000
+		}
+	},
+	"zai/glm-5.2": {
+		"cost": {
+			"cache_read": 0.26,
+			"input": 1.4,
+			"output": 4.4
+		},
+		"limit": {
+			"context": 1048576
+		}
+	},
+	"zai/glm-5.2-fast": {
+		"cost": {
+			"cache_read": 0.21,
+			"input": 2.1,
+			"output": 6.6
+		},
+		"limit": {
+			"context": 1000000
+		}
+	},
+	"zai/glm-5v-turbo": {
+		"cost": {
+			"cache_read": 0.24,
+			"input": 1.2,
+			"output": 4
+		},
+		"limit": {
+			"context": 200000
 		}
 	},
 	"~anthropic/claude-fable-latest": {
