@@ -118,13 +118,23 @@ fn required_flake_lock_string_field(
         })
 }
 
+/// Compacts the LiteLLM snapshot into the per-model field subset the runtime
+/// loads, keeping every model that prices both input and output tokens.
+///
+/// There is no family whitelist: agents report models from many vendors
+/// (Gemini via Antigravity, GLM via ZCode, DeepSeek and Qwen via several), and
+/// an offline report must price all of them, not just Claude and GPT. The
+/// compaction itself keeps the embedded snapshot small — a few hundred bytes
+/// per model.
 fn compact_pricing_json(json: &str) -> Option<String> {
     let Value::Object(raw) = serde_json::from_str::<Value>(json).ok()? else {
         return None;
     };
     let mut compact = Map::new();
     for (model, pricing) in raw {
-        if !is_embedded_model(&model) {
+        // LiteLLM ships one `sample_spec` pseudo-entry documenting the schema.
+        // It prices nothing real and must not become a lookup key.
+        if model == "sample_spec" {
             continue;
         }
         let Value::Object(pricing) = pricing else {
@@ -162,20 +172,4 @@ fn compact_pricing_json(json: &str) -> Option<String> {
         }
     }
     serde_json::to_string(&Value::Object(compact)).ok()
-}
-
-fn is_embedded_model(model: &str) -> bool {
-    model.starts_with("claude-")
-        || model.starts_with("anthropic.")
-        || model.starts_with("anthropic/")
-        || model.starts_with("us.anthropic.")
-        || model.starts_with("eu.anthropic.")
-        || model.starts_with("global.anthropic.")
-        || model.starts_with("jp.anthropic.")
-        || model.starts_with("au.anthropic.")
-        || model.starts_with("gpt-")
-        || model.starts_with("openai/")
-        || model.starts_with("azure/")
-        || model.starts_with("zai/")
-        || model.starts_with("openrouter/openai/")
 }

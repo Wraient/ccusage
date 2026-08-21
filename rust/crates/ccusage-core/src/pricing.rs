@@ -1540,6 +1540,20 @@ mod tests {
     }
 
     #[test]
+    fn embedded_pricing_covers_harness_models_for_offline_reports() {
+        let pricing = PricingMap::load_embedded();
+
+        // Antigravity records bare Gemini names.
+        assert!(pricing.find("gemini-3.6-flash").is_some());
+        assert!(pricing.find("gemini-3.7-flash").is_some());
+        // Grok's modelUsage keys price through xAI's namespace.
+        assert!(pricing.find("xai/grok-4.5").is_some());
+        // Qwen and DeepSeek publish under Alibaba's DashScope namespace.
+        assert!(pricing.find("dashscope/qwen3.8-max").is_some());
+        assert!(pricing.find("dashscope/deepseek-v4-flash-0731").is_some());
+    }
+
+    #[test]
     fn reads_embedded_model_context_limits() {
         let pricing = PricingMap::load_embedded();
 
@@ -2565,10 +2579,13 @@ mod tests {
 
     #[test]
     fn embedded_build_time_pricing_is_compact() {
-        assert!(BUILD_TIME_PRICING_JSON.len() < 200_000);
+        // Every priced LiteLLM model embeds so offline reports can price
+        // non-Claude harnesses too; only the per-model field compaction bounds
+        // the snapshot size.
+        assert!(BUILD_TIME_PRICING_JSON.len() < 400_000);
         assert!(!BUILD_TIME_PRICING_JSON.contains("\"source\""));
-        assert!(!BUILD_TIME_PRICING_JSON.contains("vertex_ai/"));
         assert!(BUILD_TIME_PRICING_JSON.contains("claude-opus-4-6"));
+        assert!(BUILD_TIME_PRICING_JSON.contains("gemini-3.7-flash"));
     }
 
     #[test]
